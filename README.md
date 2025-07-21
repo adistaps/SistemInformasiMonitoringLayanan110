@@ -52,11 +52,7 @@ Jika Anda ingin mengembangkan atau menjalankan proyek ini secara lokal, Anda dap
 
 ## Deployment
 
-Untuk melakukan deploy aplikasi ini, Anda dapat menggunakan platform seperti **Vercel** atau **Netlify**, atau mengklik **Share -> Publish** di [Lovable](https://lovable.dev/projects/8c670983-2d42-4535-8f88-ad92cfc80008).
-
-## Kustomisasi Domain
-
-Untuk menghubungkan aplikasi ini dengan domain kustom, Anda bisa mengikuti langkah-langkah di [Panduan Menghubungkan Domain Kustom](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide).
+Untuk melakukan deploy aplikasi ini, Anda dapat menggunakan platform seperti **Vercel** atau **Netlify**
 
 ## Kontribusi
 

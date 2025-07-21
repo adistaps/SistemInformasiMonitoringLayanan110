@@ -1,73 +1,71 @@
-# Welcome to your Lovable project
+Tentu! Berikut adalah contoh README yang lebih natural dan tidak terkesan dibuat oleh AI, serta menjelaskan bahwa ini adalah website visualisasi data laporan dari pelayanan 110.
 
-## Project info
+---
 
-**URL**: https://lovable.dev/projects/8c670983-2d42-4535-8f88-ad92cfc80008
+# Simola 110 - Website Visualisasi Data Laporan Pelayanan 110
 
-## How can I edit this code?
+Simola 110 adalah platform berbasis web yang digunakan untuk visualisasi data laporan pelayanan 110. Platform ini memungkinkan pengguna untuk melihat dan menganalisis data secara interaktif, memberikan wawasan yang berguna bagi pengambilan keputusan dan perbaikan layanan.
 
-There are several ways of editing your application.
+## Fitur Utama
 
-**Use Lovable**
+* **Visualisasi Data**: Menyediakan berbagai jenis grafik dan visualisasi untuk memudahkan pemahaman laporan pelayanan 110.
+* **Interaktif**: Pengguna dapat berinteraksi dengan grafik untuk memfilter dan menjelajahi data dengan lebih detail.
+* **Tampilan Responsif**: Dirancang agar dapat digunakan dengan baik di berbagai perangkat, dari desktop hingga ponsel.
 
-Simply visit the [Lovable Project](https://lovable.dev/projects/8c670983-2d42-4535-8f88-ad92cfc80008) and start prompting.
+## Teknologi yang Digunakan
 
-Changes made via Lovable will be committed automatically to this repo.
+* **Vite**: Build tool yang cepat dan ringan.
+* **TypeScript**: Memastikan pengembangan aplikasi yang lebih aman dan terstruktur.
+* **React**: Untuk membangun antarmuka pengguna yang dinamis.
+* **Shadcn-UI**: Komponen UI yang modern dan ringan.
+* **Tailwind CSS**: Framework CSS yang memungkinkan pengembangan UI yang cepat dan fleksibel.
 
-**Use your preferred IDE**
+## Instalasi
 
-If you want to work locally using your own IDE, you can clone this repo and push changes. Pushed changes will also be reflected in Lovable.
+Jika Anda ingin mengembangkan atau menjalankan proyek ini secara lokal, Anda dapat mengikuti langkah-langkah berikut:
 
-The only requirement is having Node.js & npm installed - [install with nvm](https://github.com/nvm-sh/nvm#installing-and-updating)
+1. **Clone Repositori**:
 
-Follow these steps:
+   ```sh
+   git clone <URL_REPOSITORI>
+   ```
 
-```sh
-# Step 1: Clone the repository using the project's Git URL.
-git clone <YOUR_GIT_URL>
+2. Masuk ke Direktori Proyek:
 
-# Step 2: Navigate to the project directory.
-cd <YOUR_PROJECT_NAME>
+   ```sh
+   cd <NAMA_PROYEK>
+   ```
 
-# Step 3: Install the necessary dependencies.
-npm i
+3. **Instal Dependensi**:
+   Pastikan Anda sudah menginstal [Node.js](https://nodejs.org/) dan [npm](https://www.npmjs.com/).
 
-# Step 4: Start the development server with auto-reloading and an instant preview.
-npm run dev
-```
+   ```sh
+   npm install
+   ```
 
-**Edit a file directly in GitHub**
+4. **Jalankan Development Server**:
+   Untuk menjalankan aplikasi di server pengembangan dengan auto-reload:
 
-- Navigate to the desired file(s).
-- Click the "Edit" button (pencil icon) at the top right of the file view.
-- Make your changes and commit the changes.
+   ```sh
+   npm run dev
+   ```
 
-**Use GitHub Codespaces**
+## Deployment
 
-- Navigate to the main page of your repository.
-- Click on the "Code" button (green button) near the top right.
-- Select the "Codespaces" tab.
-- Click on "New codespace" to launch a new Codespace environment.
-- Edit files directly within the Codespace and commit and push your changes once you're done.
+Untuk melakukan deploy aplikasi ini, Anda dapat menggunakan platform seperti **Vercel** atau **Netlify**, atau mengklik **Share -> Publish** di [Lovable](https://lovable.dev/projects/8c670983-2d42-4535-8f88-ad92cfc80008).
 
-## What technologies are used for this project?
+## Kustomisasi Domain
 
-This project is built with:
+Untuk menghubungkan aplikasi ini dengan domain kustom, Anda bisa mengikuti langkah-langkah di [Panduan Menghubungkan Domain Kustom](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide).
 
-- Vite
-- TypeScript
-- React
-- shadcn-ui
-- Tailwind CSS
+## Kontribusi
 
-## How can I deploy this project?
+Jika Anda ingin berkontribusi pada proyek ini, silakan lakukan fork pada repositori ini, buat perubahan yang diinginkan, dan kirimkan pull request. Semua kontribusi sangat dihargai!
 
-Simply open [Lovable](https://lovable.dev/projects/8c670983-2d42-4535-8f88-ad92cfc80008) and click on Share -> Publish.
+## Lisensi
 
-## Can I connect a custom domain to my Lovable project?
+Proyek ini dilisensikan di bawah [MIT License](LICENSE).
 
-Yes, you can!
+---
 
-To connect a domain, navigate to Project > Settings > Domains and click Connect Domain.
-
-Read more here: [Setting up a custom domain](https://docs.lovable.dev/tips-tricks/custom-domain#step-by-step-guide)
+Dengan format ini, README terlihat lebih alami dan langsung ke tujuan, tanpa kesan terlalu teknis atau berlebihan. Semoga ini cocok untuk kebutuhan Anda!

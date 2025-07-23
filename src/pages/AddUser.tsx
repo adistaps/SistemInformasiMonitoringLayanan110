@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { ArrowLeft, User, Save } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -15,19 +14,21 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { toast } from "@/components/ui/use-toast";
+import { toast } from "@/hooks/use-toast";
+import { useCreateProfile } from "@/hooks/useProfiles";
 
 const AddUser = () => {
   const navigate = useNavigate();
+  const createProfileMutation = useCreateProfile();
+  
   const [formData, setFormData] = useState({
     nama: "",
     nrp: "",
     jabatan: "",
-    unit: "",
+    unit_kerja: "",
     email: "",
     telepon: "",
-    status: "Aktif",
-    role: "User"
+    role: "petugas"
   });
 
   const handleInputChange = (field: string, value: string) => {
@@ -43,10 +44,10 @@ const AddUser = () => {
     return `${year}${random}`;
   };
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.nama || !formData.jabatan || !formData.unit || !formData.email || !formData.telepon) {
+    if (!formData.nama || !formData.jabatan || !formData.unit_kerja || !formData.email || !formData.telepon) {
       toast({
         title: "Form Tidak Lengkap",
         description: "Mohon lengkapi semua field yang diperlukan",
@@ -55,25 +56,37 @@ const AddUser = () => {
       return;
     }
 
-    const newUser = {
-      ...formData,
-      id: `USR${Date.now().toString().slice(-3)}`,
-      nrp: formData.nrp || generateNRP(),
-      lastLogin: new Date().toISOString().slice(0, 16).replace('T', ' ')
-    };
+    // Validasi email format
+    const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
+    if (!emailRegex.test(formData.email)) {
+      toast({
+        title: "Email Tidak Valid",
+        description: "Mohon masukkan alamat email yang valid",
+        variant: "destructive",
+      });
+      return;
+    }
 
-    // Simpan ke localStorage
-    const existingUsers = localStorage.getItem('users');
-    const users = existingUsers ? JSON.parse(existingUsers) : [];
-    users.push(newUser);
-    localStorage.setItem('users', JSON.stringify(users));
+    try {
+      const profileData = {
+        nama: formData.nama,
+        nrp: formData.nrp || generateNRP(),
+        jabatan: formData.jabatan,
+        unit_kerja: formData.unit_kerja,
+        email: formData.email,
+        telepon: formData.telepon,
+        role: formData.role,
+        status: 'aktif', // default status
+        created_at: new Date().toISOString(),
+        updated_at: new Date().toISOString()
+      };
 
-    toast({
-      title: "Pengguna Berhasil Ditambahkan",
-      description: `${formData.nama} telah ditambahkan ke sistem`,
-    });
-
-    navigate('/users');
+      await createProfileMutation.mutateAsync(profileData);
+      navigate('/users');
+    } catch (error) {
+      console.error("Error creating user:", error);
+      // Error handling sudah dilakukan di hook useCreateProfile
+    }
   };
 
   return (
@@ -116,6 +129,7 @@ const AddUser = () => {
                         onChange={(e) => handleInputChange('nama', e.target.value)}
                         placeholder="Nama lengkap pengguna"
                         required
+                        disabled={createProfileMutation.isPending}
                       />
                     </div>
                     <div>
@@ -125,6 +139,7 @@ const AddUser = () => {
                         value={formData.nrp}
                         onChange={(e) => handleInputChange('nrp', e.target.value)}
                         placeholder="NRP akan digenerate otomatis jika kosong"
+                        disabled={createProfileMutation.isPending}
                       />
                     </div>
                   </div>
@@ -138,11 +153,16 @@ const AddUser = () => {
                         onChange={(e) => handleInputChange('jabatan', e.target.value)}
                         placeholder="Jabatan pengguna"
                         required
+                        disabled={createProfileMutation.isPending}
                       />
                     </div>
                     <div>
-                      <Label htmlFor="unit">Unit Kerja *</Label>
-                      <Select value={formData.unit} onValueChange={(value) => handleInputChange('unit', value)}>
+                      <Label htmlFor="unit_kerja">Unit Kerja *</Label>
+                      <Select 
+                        value={formData.unit_kerja} 
+                        onValueChange={(value) => handleInputChange('unit_kerja', value)}
+                        disabled={createProfileMutation.isPending}
+                      >
                         <SelectTrigger>
                           <SelectValue placeholder="Pilih unit kerja" />
                         </SelectTrigger>
@@ -168,6 +188,7 @@ const AddUser = () => {
                         onChange={(e) => handleInputChange('email', e.target.value)}
                         placeholder="email@polri.go.id"
                         required
+                        disabled={createProfileMutation.isPending}
                       />
                     </div>
                     <div>
@@ -178,45 +199,55 @@ const AddUser = () => {
                         onChange={(e) => handleInputChange('telepon', e.target.value)}
                         placeholder="0274-xxxxxxx"
                         required
+                        disabled={createProfileMutation.isPending}
                       />
                     </div>
                   </div>
 
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                     <div>
-                      <Label htmlFor="status">Status</Label>
-                      <Select value={formData.status} onValueChange={(value) => handleInputChange('status', value)}>
+                      <Label htmlFor="role">Role *</Label>
+                      <Select 
+                        value={formData.role} 
+                        onValueChange={(value) => handleInputChange('role', value)}
+                        disabled={createProfileMutation.isPending}
+                      >
                         <SelectTrigger>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>
-                          <SelectItem value="Aktif">Aktif</SelectItem>
-                          <SelectItem value="Non-Aktif">Non-Aktif</SelectItem>
+                          <SelectItem value="admin">Admin</SelectItem>
+                          <SelectItem value="dispatcher">Dispatcher</SelectItem>
+                          <SelectItem value="petugas">Petugas</SelectItem>
                         </SelectContent>
                       </Select>
                     </div>
                     <div>
-                      <Label htmlFor="role">Role</Label>
-                      <Select value={formData.role} onValueChange={(value) => handleInputChange('role', value)}>
-                        <SelectTrigger>
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent>
-                          <SelectItem value="Admin">Admin</SelectItem>
-                          <SelectItem value="Supervisor">Supervisor</SelectItem>
-                          <SelectItem value="Operator">Operator</SelectItem>
-                          <SelectItem value="User">User</SelectItem>
-                        </SelectContent>
-                      </Select>
+                      <Label htmlFor="status_info">Status</Label>
+                      <Input
+                        id="status_info"
+                        value="Aktif (default)"
+                        disabled
+                        className="bg-gray-100"
+                      />
                     </div>
                   </div>
 
                   <div className="flex gap-4 pt-4">
-                    <Button type="submit" className="flex items-center gap-2">
+                    <Button 
+                      type="submit" 
+                      className="flex items-center gap-2"
+                      disabled={createProfileMutation.isPending}
+                    >
                       <Save className="h-4 w-4" />
-                      Simpan Pengguna
+                      {createProfileMutation.isPending ? "Menyimpan..." : "Simpan Pengguna"}
                     </Button>
-                    <Button type="button" variant="outline" onClick={() => navigate('/users')}>
+                    <Button 
+                      type="button" 
+                      variant="outline" 
+                      onClick={() => navigate('/users')}
+                      disabled={createProfileMutation.isPending}
+                    >
                       Batal
                     </Button>
                   </div>

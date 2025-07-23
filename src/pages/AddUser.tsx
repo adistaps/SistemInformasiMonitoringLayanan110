@@ -47,10 +47,24 @@ const AddUser = () => {
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
     
-    if (!formData.nama || !formData.jabatan || !formData.unit_kerja || !formData.email || !formData.telepon) {
+    console.log('🔍 Form submission started with data:', formData);
+    
+    // Validasi field wajib
+    const requiredFields = [
+      { field: 'nama', label: 'Nama Lengkap' },
+      { field: 'jabatan', label: 'Jabatan' },
+      { field: 'unit_kerja', label: 'Unit Kerja' },
+      { field: 'email', label: 'Email' },
+      { field: 'telepon', label: 'Telepon' }
+    ];
+    
+    const missingFields = requiredFields.filter(({ field }) => !formData[field]?.trim());
+    
+    if (missingFields.length > 0) {
+      const missingLabels = missingFields.map(({ label }) => label).join(', ');
       toast({
         title: "Form Tidak Lengkap",
-        description: "Mohon lengkapi semua field yang diperlukan",
+        description: `Field berikut harus diisi: ${missingLabels}`,
         variant: "destructive",
       });
       return;
@@ -58,7 +72,7 @@ const AddUser = () => {
 
     // Validasi email format
     const emailRegex = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-    if (!emailRegex.test(formData.email)) {
+    if (!emailRegex.test(formData.email.trim())) {
       toast({
         title: "Email Tidak Valid",
         description: "Mohon masukkan alamat email yang valid",
@@ -67,25 +81,102 @@ const AddUser = () => {
       return;
     }
 
+    // Validasi nomor telepon (basic)
+    const phoneRegex = /^[\d\-\+\(\)\s]+$/;
+    if (!phoneRegex.test(formData.telepon.trim())) {
+      toast({
+        title: "Nomor Telepon Tidak Valid",
+        description: "Mohon masukkan nomor telepon yang valid",
+        variant: "destructive",
+      });
+      return;
+    }
+
     try {
       const profileData = {
-        nama: formData.nama,
-        nrp: formData.nrp || generateNRP(),
-        jabatan: formData.jabatan,
+        nama: formData.nama.trim(),
+        nrp: formData.nrp?.trim() || generateNRP(),
+        jabatan: formData.jabatan.trim(),
         unit_kerja: formData.unit_kerja,
-        email: formData.email,
-        telepon: formData.telepon,
+        email: formData.email.trim().toLowerCase(),
+        telepon: formData.telepon.trim(),
         role: formData.role,
-        status: 'aktif', // default status
+        status: 'aktif',
         created_at: new Date().toISOString(),
         updated_at: new Date().toISOString()
       };
 
-      await createProfileMutation.mutateAsync(profileData);
-      navigate('/users');
-    } catch (error) {
-      console.error("Error creating user:", error);
-      // Error handling sudah dilakukan di hook useCreateProfile
+      console.log('📤 Sending profile data to server:', profileData);
+
+      const result = await createProfileMutation.mutateAsync(profileData);
+      
+      console.log('✅ Profile created successfully:', result);
+      
+      toast({
+        title: "Berhasil!",
+        description: `Pengguna ${profileData.nama} berhasil ditambahkan`,
+      });
+      
+      // Reset form
+      setFormData({
+        nama: "",
+        nrp: "",
+        jabatan: "",
+        unit_kerja: "",
+        email: "",
+        telepon: "",
+        role: "petugas"
+      });
+      
+      // Navigate after a short delay to ensure toast is visible
+      setTimeout(() => {
+        navigate('/users');
+      }, 1000);
+      
+    } catch (error: any) {
+      console.error("❌ Detailed error creating user:", error);
+      console.error("Error details:", {
+        message: error.message,
+        code: error.code,
+        details: error.details,
+        hint: error.hint
+      });
+      
+      // Handle specific error types
+      let errorTitle = "Error";
+      let errorMessage = "Gagal membuat pengguna baru";
+      
+      if (error.code === '23505') {
+        errorTitle = "Data Duplikat";
+        if (error.message?.includes('email')) {
+          errorMessage = "Email sudah digunakan oleh pengguna lain";
+        } else if (error.message?.includes('nrp')) {
+          errorMessage = "NRP sudah digunakan oleh pengguna lain";
+        } else {
+          errorMessage = "Ada data yang sudah digunakan sebelumnya";
+        }
+      } else if (error.code === '42501' || error.message?.includes('permission')) {
+        errorTitle = "Akses Ditolak";
+        errorMessage = "Anda tidak memiliki izin untuk membuat pengguna";
+      } else if (error.code === '23502') {
+        errorTitle = "Data Tidak Lengkap";
+        errorMessage = "Beberapa field wajib tidak diisi dengan benar";
+      } else if (error.message?.includes('duplicate')) {
+        errorTitle = "Data Duplikat";
+        errorMessage = "Email atau NRP sudah digunakan";
+      } else if (error.message?.includes('network') || error.message?.includes('fetch')) {
+        errorTitle = "Koneksi Bermasalah";
+        errorMessage = "Periksa koneksi internet Anda";
+      } else if (error.message?.includes('auth')) {
+        errorTitle = "Autentikasi Gagal";
+        errorMessage = "Silakan login ulang";
+      }
+      
+      toast({
+        title: errorTitle,
+        description: errorMessage,
+        variant: "destructive",
+      });
     }
   };
 
@@ -130,6 +221,7 @@ const AddUser = () => {
                         placeholder="Nama lengkap pengguna"
                         required
                         disabled={createProfileMutation.isPending}
+                        className={createProfileMutation.isPending ? "opacity-50" : ""}
                       />
                     </div>
                     <div>
@@ -140,6 +232,7 @@ const AddUser = () => {
                         onChange={(e) => handleInputChange('nrp', e.target.value)}
                         placeholder="NRP akan digenerate otomatis jika kosong"
                         disabled={createProfileMutation.isPending}
+                        className={createProfileMutation.isPending ? "opacity-50" : ""}
                       />
                     </div>
                   </div>
@@ -154,6 +247,7 @@ const AddUser = () => {
                         placeholder="Jabatan pengguna"
                         required
                         disabled={createProfileMutation.isPending}
+                        className={createProfileMutation.isPending ? "opacity-50" : ""}
                       />
                     </div>
                     <div>
@@ -163,7 +257,7 @@ const AddUser = () => {
                         onValueChange={(value) => handleInputChange('unit_kerja', value)}
                         disabled={createProfileMutation.isPending}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className={createProfileMutation.isPending ? "opacity-50" : ""}>
                           <SelectValue placeholder="Pilih unit kerja" />
                         </SelectTrigger>
                         <SelectContent>
@@ -189,6 +283,7 @@ const AddUser = () => {
                         placeholder="email@polri.go.id"
                         required
                         disabled={createProfileMutation.isPending}
+                        className={createProfileMutation.isPending ? "opacity-50" : ""}
                       />
                     </div>
                     <div>
@@ -200,6 +295,7 @@ const AddUser = () => {
                         placeholder="0274-xxxxxxx"
                         required
                         disabled={createProfileMutation.isPending}
+                        className={createProfileMutation.isPending ? "opacity-50" : ""}
                       />
                     </div>
                   </div>
@@ -212,7 +308,7 @@ const AddUser = () => {
                         onValueChange={(value) => handleInputChange('role', value)}
                         disabled={createProfileMutation.isPending}
                       >
-                        <SelectTrigger>
+                        <SelectTrigger className={createProfileMutation.isPending ? "opacity-50" : ""}>
                           <SelectValue />
                         </SelectTrigger>
                         <SelectContent>

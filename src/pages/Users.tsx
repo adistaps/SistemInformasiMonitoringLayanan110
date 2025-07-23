@@ -93,7 +93,7 @@ const Users = () => {
                 <h1 className="text-2xl font-bold text-gray-900">Manajemen Pengguna</h1>
                 <p className="text-gray-600">Kelola pengguna sistem SIMOLA 110</p>
               </div>
-              <Button onClick={() => navigate('/users/add')} className="flex items-center gap-2">
+              <Button onClick={() => navigate('/users/AddUser')} className="flex items-center gap-2">
                 <UserPlus className="h-4 w-4" />
                 Tambah Pengguna
               </Button>

@@ -1,4 +1,3 @@
-
 import { useState } from "react";
 import { Search, UserPlus, Edit, Trash2, Shield, User } from "lucide-react";
 import { useNavigate } from "react-router-dom";
@@ -93,7 +92,7 @@ const Users = () => {
                 <h1 className="text-2xl font-bold text-gray-900">Manajemen Pengguna</h1>
                 <p className="text-gray-600">Kelola pengguna sistem SIMOLA 110</p>
               </div>
-              <Button onClick={() => navigate('/users/AddUser')} className="flex items-center gap-2">
+              <Button onClick={() => navigate('/add-user')} className="flex items-center gap-2">
                 <UserPlus className="h-4 w-4" />
                 Tambah Pengguna
               </Button>
@@ -184,7 +183,7 @@ const Users = () => {
                             <Button 
                               variant="ghost" 
                               size="sm"
-                              onClick={() => navigate(`/users/edit/${user.id}`)}
+                              onClick={() => navigate(`/edit-user/${user.id}`)}
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
